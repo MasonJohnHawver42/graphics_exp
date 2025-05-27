@@ -1,0 +1,8 @@
+GE.*
+.runtime
+runtime
+tmp
+build
+.vscode
+.scripts
+./*.cap
