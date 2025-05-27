@@ -1,0 +1,21 @@
+namespace gl;
+
+enum ShaderStage : byte {
+  Vertex,
+  Fragment,
+  Compute,
+  Geometry,
+  TessControl,
+  TessEval
+}
+
+table ShaderEntry {
+  stage: ShaderStage;
+  source: string;
+}
+
+table ShaderFile {
+  shaders: [ShaderEntry];
+}
+
+root_type ShaderFile;

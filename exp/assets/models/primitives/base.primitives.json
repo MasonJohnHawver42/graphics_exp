@@ -1,0 +1,6 @@
+{
+    "models": {
+        "cube": "cube.obj",
+        "plane": "plane.obj"
+    }
+}

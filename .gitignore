@@ -5,4 +5,6 @@ tmp
 build
 .vscode
 .scripts
-./*.cap
+cube.cap
+exp/assets/voxels
+__pycache__

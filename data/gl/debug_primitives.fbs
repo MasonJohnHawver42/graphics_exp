@@ -1,0 +1,22 @@
+namespace gl.debug;
+
+table DebugPrimitiveModel {
+  vert_offset:uint;
+  ebo_offset:uint;
+  vert_length:uint;
+  ebo_length:uint;
+}
+
+table DebugPrimitiveVertex {
+  position:[float]; // length 3
+  normal:[float];   // length 3
+}
+
+table DebugPrimitives {
+  model_names:[string];
+  model_offsets:[DebugPrimitiveModel];
+  vertices:[DebugPrimitiveVertex];
+  indices:[uint];
+}
+
+root_type DebugPrimitives;
