@@ -1,0 +1,50 @@
+namespace gl.pbr.data;
+
+enum TextureType: byte {
+  Albedo,
+  MRAO,
+  Normal,
+  Emissive
+}
+
+enum TextureRes: byte {
+  R512,
+  R1024,
+  R2048
+}
+
+table TexturePool {
+  layers_cap: uint; // just specifies how much memory to use on this texture pool
+  type: TextureType;
+  res: TextureRes;
+}
+
+table Texture {
+  path: string; // path to .png file
+  uuid: uint;   // unique integer id for it
+  type: TextureType;
+  res: TextureRes;
+}
+
+table Material {
+  uuid: uint; // unique integer id
+  albedo_uuid: uint; // ids for textures
+  mrao_uuid: uint;
+  normal_uuid: uint;
+  emissive_uuid: uint;
+}
+
+table Model {
+  uuid: uint; // unique id for each model
+  materials: [Material]
+}
+
+table PBRCache {
+  models: [Model];
+  materials: [Material];
+  textures: [Texture];
+
+  texture_pools: [TexturePool];
+}
+
+root_type TexturePoolList;

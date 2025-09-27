@@ -4,7 +4,6 @@ runtime
 tmp
 build
 .vscode
-.scripts
 cube.cap
-exp/assets/voxels
+sbx/assets
 __pycache__

@@ -1,0 +1,8 @@
+AssetForge>=0.3.14
+Pillow>=8.0.0
+numpy
+opencv-python>=4.5.0
+trimesh
+scipy
+flatbuffers
+pygltflib

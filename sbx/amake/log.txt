@@ -1,0 +1,48 @@
+Loaded equirectangular image: /home/mjh/Programming/fun/graphics_exp/sbx/assets/images/cubemaps/rogland_clear_night_4k.hdr (shape: (2048, 4096, 3))
+Processing face: right
+Saved right face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/right.hdr
+../rogland_clear_night_4k/right.hdr
+Processing face: left
+Saved left face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/left.hdr
+../rogland_clear_night_4k/left.hdr
+Processing face: top
+Saved top face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/top.hdr
+../rogland_clear_night_4k/top.hdr
+Processing face: bottom
+Saved bottom face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/bottom.hdr
+../rogland_clear_night_4k/bottom.hdr
+Processing face: front
+Saved front face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/front.hdr
+../rogland_clear_night_4k/front.hdr
+Processing face: back
+Saved back face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/back.hdr
+../rogland_clear_night_4k/back.hdr
+Successfully wrote binary cubemap meta to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k.cubemap.bin
+Traceback (most recent call last):
+  File "/home/mjh/Programming/fun/graphics_exp/sbx/amake/primitives.py", line 9, in <module>
+    from .data.gl.debug import DebugPrimitives, DebugPrimitiveModel, DebugPrimitiveVertex
+ImportError: attempted relative import with no known parent package
+Loaded equirectangular image: /home/mjh/Programming/fun/graphics_exp/sbx/assets/images/cubemaps/rogland_clear_night_4k.hdr (shape: (2048, 4096, 3))
+Processing face: right
+Saved right face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/right.hdr
+../rogland_clear_night_4k/right.hdr
+Processing face: left
+Saved left face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/left.hdr
+../rogland_clear_night_4k/left.hdr
+Processing face: top
+Saved top face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/top.hdr
+../rogland_clear_night_4k/top.hdr
+Processing face: bottom
+Saved bottom face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/bottom.hdr
+../rogland_clear_night_4k/bottom.hdr
+Processing face: front
+Saved front face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/front.hdr
+../rogland_clear_night_4k/front.hdr
+Processing face: back
+Saved back face to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k/back.hdr
+../rogland_clear_night_4k/back.hdr
+Successfully wrote binary cubemap meta to: /home/mjh/Programming/fun/graphics_exp/sbx/build/runtime/images/cubemaps/rogland_clear_night_4k.cubemap.bin
+Traceback (most recent call last):
+  File "/home/mjh/Programming/fun/graphics_exp/sbx/amake/primitives.py", line 9, in <module>
+    from .data.gl.debug import DebugPrimitives, DebugPrimitiveModel, DebugPrimitiveVertex
+ImportError: attempted relative import with no known parent package
