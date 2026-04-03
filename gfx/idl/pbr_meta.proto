@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package gl.pbr.data;
+
+enum TextureType {
+  TEXTURE_TYPE_ALBEDO   = 0;
+  TEXTURE_TYPE_MRAO     = 1;
+  TEXTURE_TYPE_NORMAL   = 2;
+  TEXTURE_TYPE_EMISSIVE = 3;
+}
+
+message TexturePool {
+  TextureType type   = 1;
+  uint32      depth  = 2;
+  uint32      width  = 3;
+  uint32      height = 4;
+}
+
+message PBRCache {
+  repeated TexturePool texture_pools = 1;
+}

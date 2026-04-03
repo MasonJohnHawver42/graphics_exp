@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package gl;
+
+enum ShaderStage {
+  SHADER_STAGE_VERTEX = 0;
+  SHADER_STAGE_FRAGMENT = 1;
+  SHADER_STAGE_COMPUTE = 2;
+  SHADER_STAGE_GEOMETRY = 3;
+  SHADER_STAGE_TESS_CONTROL = 4;
+  SHADER_STAGE_TESS_EVAL = 5;
+}
+
+message ShaderEntry {
+  ShaderStage stage = 1;
+  string source = 2;
+}
+
+message ShaderFile {
+  repeated ShaderEntry shaders = 1;
+}

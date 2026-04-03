@@ -1,6 +1,6 @@
 #include "debug.h"
 
-#include "data/debug_primitives_generated.h"
+#include <debug_primitives.pb.h>
 
 #include <cstring>             // for memcpy
 
@@ -9,35 +9,35 @@ gl::debug::primitives::IRenderer::~IRenderer() = default;
 gl::debug::primitives::ModelCacheCreateInfo::ModelCacheCreateInfo(const void* data, std::size_t size, std::pmr::memory_resource* mr)
     : models(mr), primitives(mr), vertices(mr), indices(mr) {
 
-    auto buf = gl::debug::GetDebugPrimitives(data);
-    
+    gl::debug::DebugPrimitives buf;
+    buf.ParseFromArray(data, static_cast<int>(size));
+
     // Build model name map
-    for (size_t i = 0; i < buf->model_names()->size(); ++i) {
-        std::string name(buf->model_names()->Get(i)->c_str());
-        models[name] = static_cast<unsigned int>(i);
+    for (int i = 0; i < buf.model_names_size(); ++i) {
+        models[buf.model_names(i)] = static_cast<unsigned int>(i);
     }
 
     // Model offsets
-    for (auto model : *buf->model_offsets()) {
+    for (const auto& model : buf.model_offsets()) {
         primitives.emplace_back(Model{
-            model->vert_offset(),
-            model->ebo_offset(),
-            model->vert_length(),
-            model->ebo_length()
+            model.vert_offset(),
+            model.ebo_offset(),
+            model.vert_length(),
+            model.ebo_length()
         });
     }
 
     // Vertices
-    for (auto v : *buf->vertices()) {
+    for (const auto& v : buf.vertices()) {
         Vertex vert;
-        std::memcpy(vert.position, v->position()->data(), 3 * sizeof(float));
-        std::memcpy(vert.normal, v->normal()->data(), 3 * sizeof(float));
+        std::memcpy(vert.position, v.position().data(), 3 * sizeof(float));
+        std::memcpy(vert.normal,   v.normal().data(),   3 * sizeof(float));
         vertices.push_back(vert);
     }
 
     // Indices
-    for (auto idx : *buf->indices()) {
-        indices.push_back(idx);
+    for (int idx : buf.indices()) {
+        indices.push_back(static_cast<unsigned int>(idx));
     }
 }
 

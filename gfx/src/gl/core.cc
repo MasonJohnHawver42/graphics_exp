@@ -1,6 +1,6 @@
 #include "core.h"
 
-#include "data/shader_generated.h"
+#include <shader.pb.h>
 
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
@@ -159,30 +159,35 @@ namespace gl
 
     // ShaderProgram -------------------------------------------------------------------
 
-    ShaderProgramCreateInfo::ShaderProgramCreateInfo(const void* data, std::size_t size, std::pmr::memory_resource* mr) : 
+    ShaderProgramCreateInfo::ShaderProgramCreateInfo(const void* data, std::size_t size, std::pmr::memory_resource* mr) :
         vertex_source(mr), fragment_source(mr)
     {
-        auto prog = gl::GetShaderFile(data);
-        
+        gl::ShaderFile prog;
+        prog.ParseFromArray(data, static_cast<int>(size));
+
         bool vertex_source_found = false;
         bool fragment_source_found = false;
 
-        for (auto src : *prog->shaders()) 
+        for (const auto& src : prog.shaders())
         {
-            gl::ShaderStage stage = src->stage();
-            const char* code = src->source()->c_str();
+            gl::ShaderStage stage = src.stage();
+            const std::string& code = src.source();
 
             switch (stage) {
-                case gl::ShaderStage_Vertex: 
-                    vertex_source = code; 
-                    vertex_source_found = true; 
+                case gl::SHADER_STAGE_VERTEX:
+                    vertex_source = code;
+                    vertex_source_found = true;
                     break;
-                case gl::ShaderStage_Fragment: 
-                    fragment_source = code; 
-                    fragment_source_found = true; 
+                case gl::SHADER_STAGE_FRAGMENT:
+                    fragment_source = code;
+                    fragment_source_found = true;
                     break;
-                case gl::ShaderStage_Geometry:
-                case gl::ShaderStage_Compute:
+                case gl::SHADER_STAGE_GEOMETRY:
+                case gl::SHADER_STAGE_COMPUTE:
+                case gl::SHADER_STAGE_TESS_CONTROL:
+                case gl::SHADER_STAGE_TESS_EVAL:
+                    break;
+                default:
                     break;
             }
         }

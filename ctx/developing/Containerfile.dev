@@ -1,0 +1,144 @@
+# =============================================================================
+# gfx-dev -- Development build container
+#
+# Base: AlmaLinux 9 (RHEL-compatible, full CRB + EPEL, no subscription needed)
+# Purpose: reproducible environment for building code, assets, and packages
+#          without depending on the host machine's installed tools.
+#
+# Build this image (run once, or after changing this file):
+#
+#   podman build -f ctx/Containerfile.dev -t gfx-dev:latest .
+#
+# The build scripts (.scripts/cmake.sh, compile.sh, etc.) detect when they
+# are not inside this container and re-invoke themselves inside it
+# automatically. You do not need to interact with this container directly.
+#
+# =============================================================================
+#
+# Build process (performed by the scripts inside this container):
+#
+# Step 1 -- cmake.sh: configure the cmake build system
+#
+#   cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+#         -B build/BUILD_CM -S .
+#
+#   Resolves protobuf via the static libs built into this image (see below).
+#   Resolves SDL2 and OpenGL via find_package against system packages.
+#   cpptrace is fetched via FetchContent (debug-only, small dependency).
+#
+# Step 2 -- amake.sh: build the GfxExpAmake Python wheel and project venv
+#
+#   cmake --build build/BUILD_CM --target SetupVenv
+#
+#   Triggers the chain: BuildAmakeWheel -> SetupVenv
+#     BuildAmakeWheel: runs 'python3 -m build --wheel sbx/amake/'
+#                      also regenerates sbx/amake/proto/*_pb2.py via protoc
+#     SetupVenv:       creates build/BUILD_AM/.venv, installs the wheel
+#
+# Step 3 -- assets.sh: run the asset pipeline
+#
+#   cmake --build build/BUILD_CM --target GenerateAssets
+#
+#   Runs sbx/Amake.py via the project venv. Amake.py uses AssetForge to
+#   dependency-track and build all asset types:
+#     .shader files       -> .shader.bin      (protobuf, GLSL stages)
+#     .primitives.json    -> .primitives.bin  (protobuf, mesh data)
+#     .atlas.json + image -> .atlas.bin
+#     .cubemap.json + HDR -> face images + .cubemap.bin
+#   Output: build/BUILD_AM/assets/
+#
+# Step 4 -- compile.sh: build all C++ targets and install
+#
+#   cmake --build build/BUILD_CM --parallel $(nproc)
+#   cmake --install build/BUILD_CM
+#
+#   Produces:
+#     build/BUILD_CM/bin/{helloworld,window,cube}
+#     build/INSTALL/core/lib/{libgfx_proto.a,libgfx_common.a,libgfx_gl.a}
+#     build/INSTALL/core/include/{common,gl,proto,exp}/
+#     build/INSTALL/examples/bin/{helloworld,window,cube}
+#
+# Step 5 -- package.sh: produce distributable packages
+#
+#   cpack -G TGZ   -- always produced
+#   cpack -G RPM   -- requires rpmbuild, installed below
+#
+#   Output: build/PACKAGE/examples/cube-example-0.1.0-Linux.{tar.gz,rpm}
+#   The cube component packages:
+#     examples/bin/cube
+#     share/cube-example/assets/  (all built assets from BUILD_AM)
+#
+# =============================================================================
+
+FROM almalinux:9
+
+# Enable EPEL 9 and CRB (CodeReady Builder).
+# AlmaLinux 9 is RHEL-compatible and provides full CRB without registration.
+# CRB provides SDL2-devel, mesa-libGL-devel, etc.
+RUN dnf install -y epel-release \
+    && dnf config-manager --set-enabled crb \
+    && dnf clean all
+
+# Install all build dependencies in a single layer
+RUN dnf install -y \
+        \
+        # -- C / C++ toolchain --
+        gcc \
+        gcc-c++ \
+        make \
+        binutils \
+        \
+        # -- Build system --
+        cmake \
+        \
+        # -- Version control (needed by cmake FetchContent for cpptrace and protobuf) --
+        git \
+        \
+        # -- Python 3 (asset pipeline: GfxExpAmake wheel + venv) --
+        python3 \
+        python3-pip \
+        python3-devel \
+        \
+        # -- SDL2: window and input layer --
+        SDL2-devel \
+        \
+        # -- OpenGL headers --
+        # The runtime GL driver comes from the host; only headers needed here.
+        mesa-libGL-devel \
+        \
+        # -- RPM packaging --
+        rpm-build \
+        \
+    && dnf clean all
+
+# Build protobuf 3.21.12 from source with static libs only.
+#
+# AlmaLinux 9 ships protobuf 3.14 but only provides shared libs in protobuf-devel.
+# Building from source gives us:
+#   /usr/local/bin/protoc            (used by generate_proto.sh and amake wheel build)
+#   /usr/local/lib/libprotobuf.a     (linked statically into libgfx_proto.a)
+#   /usr/local/include/google/       (headers for C++ compilation)
+#
+# Binaries built against this will not depend on any host libprotobuf.so.
+# The Python protobuf package is pinned to >=3.20,<4 to match this protoc version.
+RUN git clone --depth 1 --branch v3.21.12 \
+        https://github.com/protocolbuffers/protobuf.git /tmp/protobuf \
+    && cmake \
+        -S /tmp/protobuf \
+        -B /tmp/protobuf-build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_SHARED_LIBS=OFF \
+        -Dprotobuf_BUILD_TESTS=OFF \
+        -Dprotobuf_WITH_ZLIB=OFF \
+    && cmake --build /tmp/protobuf-build --parallel "$(nproc)" \
+    && cmake --install /tmp/protobuf-build \
+    && rm -rf /tmp/protobuf /tmp/protobuf-build
+
+# Verify key tools are present and print versions for build log visibility
+RUN echo "=== toolchain versions ===" \
+ && cmake     --version | head -1 \
+ && gcc       --version | head -1 \
+ && g++       --version | head -1 \
+ && protoc    --version \
+ && python3   --version \
+ && rpmbuild  --version

@@ -1,0 +1,2 @@
+#!/bin/sh
+cd /usr/share/cube-example/assets && exec /usr/libexec/cube-example/cube "$@"

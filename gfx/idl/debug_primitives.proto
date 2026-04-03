@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package gl.debug;
+
+message DebugPrimitiveModel {
+  uint32 vert_offset = 1;
+  uint32 ebo_offset  = 2;
+  uint32 vert_length = 3;
+  uint32 ebo_length  = 4;
+}
+
+message DebugPrimitiveVertex {
+  repeated float position = 1; // length 3
+  repeated float normal   = 2; // length 3
+}
+
+message DebugPrimitives {
+  repeated string              model_names   = 1;
+  repeated DebugPrimitiveModel model_offsets = 2;
+  repeated DebugPrimitiveVertex vertices     = 3;
+  repeated uint32               indices      = 4;
+}

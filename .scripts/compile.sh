@@ -6,4 +6,5 @@ REPO_DIR="$(realpath "$SCRIPT_DIR/..")"
 source "$SCRIPT_DIR/common.sh"
 run_in_container "$REPO_DIR" "$@"
 
-cmake --build build/BUILD_CM --target GenerateAssets --parallel "$(nproc)"
+cmake --build build/BUILD_CM --parallel "$(nproc)"
+cmake --install build/BUILD_CM

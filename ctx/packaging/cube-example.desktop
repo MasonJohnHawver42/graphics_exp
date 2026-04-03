@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Cube Example
+Comment=OpenGL cube rendering demo
+Exec=cube-example
+Icon=application-x-executable
+Categories=Graphics;3DGraphics;
+Terminal=false
